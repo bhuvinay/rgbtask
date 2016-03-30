@@ -1,4 +1,4 @@
-package com.example.demo.rgptaskapp.ui;
+package com.example.demo.rgptaskapp.activities;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -15,10 +15,9 @@ import android.widget.Toast;
 
 import com.example.demo.rgptaskapp.R;
 import com.example.demo.rgptaskapp.networks.ClientGenerator;
-import com.example.demo.rgptaskapp.networks.RequestBuilder;
 import com.example.demo.rgptaskapp.networks.ResponseListener;
-import com.example.demo.rgptaskapp.utils.Constants;
-import com.example.demo.rgptaskapp.utils.Utility;
+import com.example.demo.rgptaskapp.utils.AppConstants;
+import com.example.demo.rgptaskapp.utils.AppUtils;
 
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
@@ -31,12 +30,12 @@ import retrofit.RetrofitError;
 /**
  * Created by vinaypratap on 30/3/16.
  */
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
+public class HomePageActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView mTextResult;
     private EditText mInputTimeInt;
     private Button mStartRequest, mEndRequest;
     private ProgressBar progressBar;
-    private ArrayList<String> list = new ArrayList<>(Constants.MAX_SIZE);
+    private ArrayList<String> list = new ArrayList<>(AppConstants.MAX_SIZE);
     private StringBuilder stringBuilder;
     private SharedPreferences sharedPreferences;
     private Timer timer;
@@ -58,9 +57,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mEndRequest.setOnClickListener(this);
         sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
-        String savedValue = sharedPreferences.getString(Constants.sharedPrefKey, null);
-        if (Constants.DEBUG)
-            Log.d(Constants.TAG, "savedValue-  " + savedValue);
+        String savedValue = sharedPreferences.getString(AppConstants.sharedPrefKey, null);
+        if (AppConstants.DEBUG)
+            Log.d(AppConstants.TAG, "savedValue-  " + savedValue);
         fillList(savedValue);
 
     }
@@ -71,8 +70,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             for (String str : sArray) {
                 list.add(str);
             }
-            if (Constants.DEBUG)
-                Log.d(Constants.TAG, "list-  " + list.toString());
+            if (AppConstants.DEBUG)
+                Log.d(AppConstants.TAG, "list-  " + list.toString());
         }
     }
 
@@ -83,7 +82,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void run() {
                 ResponseListener.cancelAll();  // cancell all previous requests
-                RequestBuilder requestBuilder = ClientGenerator.createService(RequestBuilder.class);
+                ClientGenerator.RequestBuilder requestBuilder = ClientGenerator.createService(ClientGenerator.RequestBuilder.class);
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -104,7 +103,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                         if (error.isNetworkError()) {
                             if (error.getCause() instanceof ConnectException) {  // no connection
-                                Toast.makeText(HomeActivity.this, R.string.toast_error_no_network, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(HomePageActivity.this, R.string.toast_error_no_network, Toast.LENGTH_SHORT).show();
                                 progressBar.setVisibility(View.INVISIBLE);
                                 endReq();
                                 if (list.size() != 0)
@@ -114,7 +113,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                             } else if (error.getCause() instanceof SocketTimeoutException) { //timeout condition
                                 //handle time out here
-                                Toast.makeText(HomeActivity.this, R.string.toast_error_time_out, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(HomePageActivity.this, R.string.toast_error_time_out, Toast.LENGTH_SHORT).show();
                                 if (list.size() >= 3)
                                     mTextResult.setText(list.subList(0, 3).toString()); // Showing only past 3 numbers
                                 else if (list.size() != 0)
@@ -123,7 +122,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                     mTextResult.setText(R.string.nothing_to_show); // no number to show
                             }
                         } else {
-                            Toast.makeText(HomeActivity.this, R.string.toast_error, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(HomePageActivity.this, R.string.toast_error, Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.INVISIBLE);
                         }
                     }
@@ -136,8 +135,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void addToList(String s) {
-        if (list.size() == Constants.MAX_SIZE)
-            list.remove(Constants.MAX_SIZE - 1);
+        if (list.size() == AppConstants.MAX_SIZE)
+            list.remove(AppConstants.MAX_SIZE - 1);
         list.add(0, s);
     }
 
@@ -157,16 +156,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             stringBuilder.append(",");
         }
         String sList = stringBuilder.toString();
-        if (Constants.DEBUG)
-            Log.d(Constants.TAG, "onStop: sList-  " + sList);
+        if (AppConstants.DEBUG)
+            Log.d(AppConstants.TAG, "onStop: sList-  " + sList);
         saveToSharedPref(sList);
         super.onStop();
     }
 
     private void saveToSharedPref(String sList) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(Constants.sharedPrefKey, sList);
-        editor.commit();
+        editor.putString(AppConstants.sharedPrefKey, sList);
+        editor.apply();
     }
 
     @Override
@@ -176,19 +175,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.start_request:
                 if (TextUtils.isEmpty(mInputTimeInt.getText().toString())) {
-                    Toast.makeText(HomeActivity.this, R.string.toast_empty_field, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(HomePageActivity.this, R.string.toast_empty_field, Toast.LENGTH_SHORT).show();
                 } else {
                     // if already running clean it and restart startrecurTimer with new value
                     endReq();
                     String timeIntVal = mInputTimeInt.getText().toString();
                     int timeIntervalMiliSec = Integer.valueOf(timeIntVal);
                     mInputTimeInt.setText(null);
-                    Utility.hideKeyboard(view, HomeActivity.this);
+                    AppUtils.hideKeyboard(view, HomePageActivity.this);
                     if (timeIntervalMiliSec >= 1) {
                         startRecurTimer(timeIntervalMiliSec * 1000);
                         mInputTimeInt.setHint(R.string.task_running);
                     } else
-                        Toast.makeText(HomeActivity.this, R.string.toast_input_one_or_more, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomePageActivity.this, R.string.toast_input_one_or_more, Toast.LENGTH_SHORT).show();
                 }
                 break;
 

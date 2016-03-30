@@ -8,7 +8,7 @@ import android.view.inputmethod.InputMethodManager;
 /**
  * Created by vinaypratap on 30/3/16.
  */
-public class Utility {
+public class AppUtils {
 
     public static void hideKeyboard(View view, Context context) {
         InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);

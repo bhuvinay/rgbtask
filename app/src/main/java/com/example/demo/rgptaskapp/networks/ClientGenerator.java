@@ -2,15 +2,17 @@ package com.example.demo.rgptaskapp.networks;
 
 import android.util.Log;
 
-import com.example.demo.rgptaskapp.utils.Constants;
+import com.example.demo.rgptaskapp.utils.AppConstants;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.util.concurrent.TimeUnit;
 
+import retrofit.Callback;
 import retrofit.Profiler;
 import retrofit.RestAdapter;
 import retrofit.android.AndroidLog;
 import retrofit.client.OkClient;
+import retrofit.http.GET;
 
 /**
  * Created by vinaypratap on 30/3/16.
@@ -19,7 +21,7 @@ public class ClientGenerator {
 
 
     private static RestAdapter.Builder builder = new RestAdapter.Builder()
-            .setEndpoint(Constants.API_BASE_URL)
+            .setEndpoint(AppConstants.API_BASE_URL)
             .setLog(new AndroidLog("Vinay"))
             .setLogLevel(RestAdapter.LogLevel.FULL)
             .setClient(getOkClient());
@@ -49,5 +51,13 @@ public class ClientGenerator {
         client.setWriteTimeout(1000, TimeUnit.MILLISECONDS);
         OkClient _client = new OkClient(client);
         return _client;
+    }
+
+    /**
+     * Created by vinaypratap on 30/3/16.
+     */
+    public static interface RequestBuilder {
+        @GET("/")
+        public void getData(Callback<String> response);
     }
 }
