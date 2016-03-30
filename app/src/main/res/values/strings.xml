@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">RGPTaskApp</string>
+    <string name="nothing_to_show">No data to show</string>
+    <string name="toast_error_no_network">No network</string>
+    <string name="toast_error_time_out">Time Out [1sec]</string>
+    <string name="toast_empty_field">Input time interval</string>
+    <string name="toast_error">Error</string>
+    <string name="input_time_interval">Input time interval in sec...</string>
+    <string name="toast_input_one_or_more">minimum time interval is 1sec</string>
+    <string name="task_running">Task is running...</string>
+    <string name="result_text">[Result]</string>
+</resources>
