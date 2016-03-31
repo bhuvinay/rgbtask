@@ -104,7 +104,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
                         if (error.isNetworkError()) {
                             if (error.getCause() instanceof ConnectException) {  // no connection
                                 Toast.makeText(HomePageActivity.this, R.string.toast_error_no_network, Toast.LENGTH_SHORT).show();
-                                progressBar.setVisibility(View.INVISIBLE);
+
                                 endReq();
                                 if (list.size() != 0)
                                     mTextResult.setText(list.toString()); //show all 5 values from list or what ever we have
@@ -145,6 +145,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             timer.cancel();
         ResponseListener.cancelAll();
         mInputTimeInt.setHint(R.string.input_time_interval);
+        progressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
